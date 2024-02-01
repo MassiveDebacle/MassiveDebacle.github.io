@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js" integrity="sha512-uaz5GpnQoE6t5echKlX8P52czvsIGgLPcvlzfvRubLZ1Hp8JemUDnbUiAahbVtPb+jUVrNETuXvAhDDF/N3M4w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/addons/p5.sound.js" integrity="sha512-TU9AWtV5uUZPX8dbBAH8NQF1tSdigPRRT82vllAQ1Ke28puiqLA6ZVKxtUGlgrH6yWFnkKy+sE6luNEGH9ar0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <title>fireball</title>
+    <style>
+        body {
+            margin: 0;
+            padding:0;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        let w = window.innerWidth
+        let h = window.innerHeight
+
+        let bx = w/2
+        let by = h/2
+        // create variable that wil store image 
+        let fireball 
+        // create variable for sound 
+        let swoosh 
+
+        let button
+
+        // preload assets 
+        function preload() {
+            // assign image 
+            fireball = loadImage('fireball.png')
+            // assign sound 
+            swoosh = loadSound('Swoosh.mp3')
+        }
+
+        function setup() {
+            createCanvas(w,h)
+            button = cube = new cube()
+        }
+
+        function cube() {
+            this.show = function() {
+                fill("red")
+                rect(bx, by, 50,50)
+            }
+            
+        }
+
+        function draw() {
+            clear()
+            // image(variable, x,y, width, height)
+            image(fireball, mouseX-100, mouseY-100, 250,250)
+            // set initial volume. variable.setValume(0.0 to 1.0)
+            swoosh.setVolume(0.3)
+            button.show()
+            
+        }
+
+        // play sound when space bar is played 
+        function keyPressed() {
+            if (keyCode === 32) {
+                    // play sound, variablename.play()
+                    swoosh.play()
+            }
+        }
+
+    </script>
+</body>
+</html>
