@@ -17,11 +17,22 @@ let p1
 let gob_I
 let EyeB_I
 
+let charcter_I
+
+// gif
+
+let charcter_AttackGIF
+
 function preload() {
     m1 = loadImage("ezMap.png")
     gob_I = loadImage("GoblinIdle.png")
     EyeB_I = loadImage("EyeB.png")
     back = loadImage("back.png")
+    charcter_I = loadImage("characterIDLE.png")
+    charcter_AttackGIF = loadImage("characterAttack.gif")
+
+    LoadCharacter_RunR = loadImage("characterRunR.gif")
+    LoadCharacter_RunL = loadImage("characterRunL.gif")
 
 }
 
@@ -35,7 +46,6 @@ function setup() {
     maps = tiled = new tiled()
 }
 
-
 function user() {
     this.x = w/15
     this.y = h/2
@@ -46,52 +56,53 @@ function user() {
     this.jumpMax = 2
 
     this.show = function() {
-        // where we determine what it looks like 
-        fill("white")
-        rectMode(this.x, this.y, 30, 55)
-        // scale(1.2)
-        image(EyeB_I, this.x-70,this.y-70, w/8, h/4, 0,0,0,0, 100)
+        noFill()
+        stroke(255,0)
+        rect(this.x, this.y, 30, 55)
 
-        // translate(0-this.x,0-this.y)
-        // scale(2,2)
-        }
+        if (keyIsDown(UP_ARROW)) {
+                this.y -= 18
+                this.x -= 0 
+                this.gravity = 0.7
+                this.velocity += this.gravity
+                this.y += this.velocity 
+            }
+
+        if (keyIsDown(LEFT_ARROW) && !keyIsDown(RIGHT_ARROW)) {
+            this.gravity = 0.7;
+            this.x -= 4;
+            image(LoadCharacter_RunL, this.x - 28, this.y - 45, w / 10, h / 5, 0, 0, 0, 0, 100);
+        } 
+        else if (keyIsDown(RIGHT_ARROW) && !keyIsDown(LEFT_ARROW)) {
+            this.gravity = 0.7;
+            this.x += 4;
+            image(LoadCharacter_RunR, this.x - 40, this.y - 45, w / 11, h / 5, 0, 0, 0, 0, 100);
+        } 
+        else {
+            // If both left and right arrow keys are pressed, show idle image
+            image(charcter_I, this.x - 28, this.y - 45, w / 12, h / 5, 0, 0, 0, 0, 100);
+}
+
     this.update = function() {
         this.velocity += this.gravity
         this.y += this.velocity 
         this.velocity *= 0.9
         this.jumpcount = 0
+
+        // Check boundaries
+    if (this.y > height - 55) { // Prevent from going below the canvas bottom
+        this.y = height - 55;
+        this.velocity = 0;
     }
-
-    this.move = function() {
-
-        if (keyIsDown(LEFT_ARROW)) {
-            this.gravity = 0.7
-            this.velocity *= 0.9
-            this.x -= 4
-            this.y += 0 
-        }
-
-        if (keyIsDown(RIGHT_ARROW)) {
-            this.gravity = 0.7
-            this.velocity *= 0.9
-            this.x += 4
-        }
+    if (this.x < 0) { // Prevent from going beyond left canvas edge
+        this.x = 0;
     }
-
-    this.jump = function() {
-        
-        if (keyIsDown(UP_ARROW)) {
-            this.y -= 12
-            this.x -= 0 
-            this.gravity = 0.7
-            this.velocity += this.gravity
-            this.y += this.velocity 
-            this.velocity *= 0.9
-            this.jumpcount + 1
-        }
-        }
+    if (this.x > width - 30) { // Prevent from going beyond right canvas edge
+        this.x = width - 30;
     }
-
+}
+}
+}
 
 function ground_1() {
     this.show = function() {
@@ -105,49 +116,62 @@ function ground_1() {
     rect(w/3, h/1.16, w/2, h/2)
 
     fill('blue')
-    rect(w/1.6, h/2, w/4, h/2)
+    rect(w/1.57, h/1.3, w/4, h/1.8)
+
+    fill('pink')
+    rect(w/1.405, h/1.65, w/4, h/2)
+
+    fill('violet')
+    rect(w/1.36, h/1.8, w/4, h/2)
+
+    fill('magenta')
+    rect(w/1.23, h/2, w/4, h/2)
+
+    fill('maroon')
+    rect(w/1.184, h/2.4, w/4, h/2)
 
     fill('green')
-    rect(w/1.184, h/3.2, w/2, h/2)
+    rect(w/1.12, h/3.2, w/2, h/2)
 
     } 
 
-    this.hit = function() {
-        let hit = false
-        if (hit = collideRectRect(w/70-350,h/1.4,w/2,h/2, player.x, player.y, 30, 55)) {
-            console.log("hit")
-            player.velocity *= 0
-            player.lift = 0
-            player.gravity = 0
-        }
+    this.hit = function() {    
+    // Check for collisions with each ground_1 object
+    let groundObjects = [
+        { x: w/70-350, y: h/1.4, width: w/2, height: h/2 }, // green
+        { x: w/5, y: h/1.22, width: w/4, height: h/2 }, // purple
+        { x: w/3, y: h/1.16, width: w/2, height: h/2 }, // red
+        { x: w/1.57, y: h/1.3, width: w/4, height: h/1.8 }, // blue
+        { x: w/1.405, y: h/1.65, width: w/4, height: h/2 }, // pink
+        { x: w/1.36, y: h/1.8, width: w/4, height: h/2 }, // violet
+        { x: w/1.23, y: h/2, width: w/4, height: h/2 }, // magenta
+        { x: w/1.184, y: h/2.4, width: w/4, height: h/2 }, // maroon
+        { x: w/1.12, y: h/3.2, width: w/4, height: h/2 }, // green
+    ]
+    
+    for (let obj of groundObjects) {
+        // Check for collisions with each side of the ground object
+        let topCollision = collideRectRect(obj.x, obj.y, obj.width, 5, player.x, player.y, 36, 75)
+        let bottomCollision = collideRectRect(obj.x, obj.y + obj.height - 5, obj.width, 5, player.x, player.y, 36, 75)
+        let leftCollision = collideRectRect(obj.x, obj.y, 5, obj.height, player.x, player.y, 36, 75)
+        let rightCollision = collideRectRect(obj.x + obj.width - 5, obj.y, 5, obj.height, player.x, player.y, 36, 75)
 
-        if (hit = collideRectRect(w/5, h/1.22, w/4, h/2, player.x, player.y, 30, 55)) {
+        // If there's a collision with any side, stop the player from moving in that direction
+        if (topCollision || bottomCollision || leftCollision || rightCollision) {
             console.log("hit")
-            player.velocity *= 0
+            player.velocity = 0
             player.lift = 0
             player.gravity = 0
-        }
 
-            if (hit = collideRectRect(w/3, h/1.16, w/2, h/2, player.x, player.y, 30, 55)) {
-                console.log("hit")
-                player.velocity *= 0
-                player.lift = 0
-                player.gravity = 0
+            if (leftCollision) {
+                player.x = obj.x - 36
+            }
+            if (rightCollision) {
+                player.x = obj.x + obj.width - 3
+            }
+        }
+    }   
 
-        if (hit = collideRectRect(w/1.6, h/2, w/4, h/2, player.x, player.y, 30, 55)) {
-            console.log("hit")
-            player.velocity *= 0
-            player.lift = 0
-            player.gravity = 0
-        }
-        
-        }
-        if (hit = collideRectRect(w/1.184, h/3.2, w/2, h/2, player.x, player.y, 30, 55)) {
-            console.log("hit")
-            player.velocity *= 0
-            player.lift = 0
-            player.gravity = 0
-        }
     }  
 }
 
@@ -162,13 +186,10 @@ function tiled(){
 }
 
 function draw() {
-    clear()
+    maps.back()
     p1g.show()
-    p1g.hit()
-    // maps.back()
     player.show()
+    p1g.hit()
     player.update()
-    player.jump()
-    player.move()
     maps.map1()
 }
