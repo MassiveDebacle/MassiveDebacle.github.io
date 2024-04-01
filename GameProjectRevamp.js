@@ -28,11 +28,14 @@ function preload() {
     gob_I = loadImage("GoblinIdle.png")
     EyeB_I = loadImage("EyeB.png")
     back = loadImage("back.png")
+    tree = loadImage("tree_back.png")
     charcter_I = loadImage("characterIDLE.png")
     charcter_AttackGIF = loadImage("characterAttack.gif")
 
     LoadCharacter_RunR = loadImage("characterRunR.gif")
     LoadCharacter_RunL = loadImage("characterRunL.gif")
+    LoadCharacter_JumpR = loadImage("characterJumpR.gif")
+    LoadCharacter_JumpL = loadImage("characterJumpL.gif")
 
 }
 
@@ -56,38 +59,46 @@ function user() {
     this.jumpMax = 2
 
     this.show = function() {
-        noFill()
-        stroke(255,0)
-        rect(this.x, this.y, 30, 55)
-
-        if (keyIsDown(UP_ARROW)) {
-                this.y -= 18
-                this.x -= 0 
-                this.gravity = 0.7
-                this.velocity += this.gravity
-                this.y += this.velocity 
-            }
-
-        if (keyIsDown(LEFT_ARROW) && !keyIsDown(RIGHT_ARROW)) {
+        noFill();
+        stroke(255, 0);
+        rect(this.x, this.y, 30, 55);
+    
+        if (keyIsDown(LEFT_ARROW) && !keyIsDown(RIGHT_ARROW) && !keyIsDown(UP_ARROW)) {
             this.gravity = 0.7;
             this.x -= 4;
-            image(LoadCharacter_RunL, this.x - 28, this.y - 45, w / 10, h / 5, 0, 0, 0, 0, 100);
+            image(LoadCharacter_RunL, this.x - 28, this.y - 45, w / 11, h / 5, 0, 0, 0, 0, 100);
         } 
-        else if (keyIsDown(RIGHT_ARROW) && !keyIsDown(LEFT_ARROW)) {
+        else if (keyIsDown(RIGHT_ARROW) && !keyIsDown(LEFT_ARROW) && !keyIsDown(UP_ARROW)) {
             this.gravity = 0.7;
             this.x += 4;
             image(LoadCharacter_RunR, this.x - 40, this.y - 45, w / 11, h / 5, 0, 0, 0, 0, 100);
         } 
+        else if (keyIsDown(UP_ARROW)) {
+            this.y -= 18
+            this.gravity = 0.7
+            this.velocity += this.gravity
+            this.y += this.velocity
+            if (keyIsDown(LEFT_ARROW)) {
+                this.x -= 4
+                image(LoadCharacter_JumpL, this.x - 35, this.y - 50, w / 14, h / 6, 0, 0, 0, 0, 100)
+            } 
+            else if (keyIsDown(RIGHT_ARROW)) {
+                this.x += 4
+                image(LoadCharacter_JumpR, this.x - 35, this.y - 50, w / 14, h / 6, 0, 0, 0, 0, 100)
+            } 
+            else {
+                image(LoadCharacter_JumpR, this.x - 35, this.y - 50, w / 14, h / 6, 0, 0, 0, 0, 100)
+            }
+        }
         else {
-            // If both left and right arrow keys are pressed, show idle image
             image(charcter_I, this.x - 28, this.y - 45, w / 12, h / 5, 0, 0, 0, 0, 100);
-}
+        }
+    }
 
     this.update = function() {
         this.velocity += this.gravity
         this.y += this.velocity 
         this.velocity *= 0.9
-        this.jumpcount = 0
 
         // Check boundaries
     if (this.y > height - 55) { // Prevent from going below the canvas bottom
@@ -102,35 +113,43 @@ function user() {
     }
 }
 }
-}
 
 function ground_1() {
     this.show = function() {
-    fill('green')
+    noFill()
+    stroke(255, 0)
     rect(w/70-350,h/1.4,w/2,h/2)
 
-    fill('purple')
+    noFill()
+    stroke(255, 0)
     rect(w/5, h/1.22, w/4, h/2)
 
-    fill('red')
+    noFill()
+    stroke(255, 0)
     rect(w/3, h/1.16, w/2, h/2)
 
-    fill('blue')
+    noFill()
+    stroke(255, 0)
     rect(w/1.57, h/1.3, w/4, h/1.8)
 
-    fill('pink')
+    noFill()
+    stroke(255, 0)
     rect(w/1.405, h/1.65, w/4, h/2)
 
-    fill('violet')
+    noFill()
+    stroke(255, 0)
     rect(w/1.36, h/1.8, w/4, h/2)
 
-    fill('magenta')
+    noFill()
+    stroke(255, 0)
     rect(w/1.23, h/2, w/4, h/2)
 
-    fill('maroon')
+    noFill()
+    stroke(255, 0)
     rect(w/1.184, h/2.4, w/4, h/2)
 
-    fill('green')
+    noFill()
+    stroke(255, 0)
     rect(w/1.12, h/3.2, w/2, h/2)
 
     } 
@@ -180,6 +199,10 @@ function tiled(){
         image(back, 0,0,w,h)
     }
 
+    this.tree = function() {
+        image(tree, 0,0,w)
+    }
+
     this.map1 = function() {
         image(m1, 0, 0,w,h)
     }
@@ -187,6 +210,7 @@ function tiled(){
 
 function draw() {
     maps.back()
+    maps.tree()
     p1g.show()
     player.show()
     p1g.hit()
