@@ -5,8 +5,8 @@ let player
 let p1g
 let m1
 let back 
-let camera
-let perspective 
+let enemy
+let attacking
 
 // polys 
 
@@ -29,24 +29,35 @@ function preload() {
     EyeB_I = loadImage("EyeB.png")
     back = loadImage("back.png")
     tree = loadImage("tree_back.png")
+
+    // charcter MC
     charcter_I = loadImage("characterIDLE.png")
     charcter_AttackGIF = loadImage("characterAttack.gif")
-
     LoadCharacter_RunR = loadImage("characterRunR.gif")
     LoadCharacter_RunL = loadImage("characterRunL.gif")
     LoadCharacter_JumpR = loadImage("characterJumpR.gif")
     LoadCharacter_JumpL = loadImage("characterJumpL.gif")
+
+    // boar
+    LoadBoar_I = loadImage("Boar_I.gif")
+
+    // signs 
+    loadPress_A = loadImage("press_A.png")
+    loadArros = loadImage("arrow_key.png")
+    loadpress_Z = loadImage("press_z.png")
+
+
 
 }
 
 function setup() {
     createCanvas(w,h, )
     collideDebug(true)
-    // createCanvas(w,h,WEBGL)
-    // camera = createCamera()
     player = user = new user()
     p1g = ground_1 = new ground_1()
     maps = tiled = new tiled()
+    enemy = en = new en()
+    int = interaction = new interaction()
 }
 
 function user() {
@@ -55,43 +66,63 @@ function user() {
     this.gravity = 0.5
     this.lift = -20 
     this.velocity = 0 
-    this.jumpcount = 0
-    this.jumpMax = 2
+
+    this.hp = 100
+    this.atk = 5
+    this.def = 10
+    this.mana = 25
+    this.level = 1 
+    this.exp = 0 
 
     this.show = function() {
-        noFill();
-        stroke(255, 0);
-        rect(this.x, this.y, 30, 55);
-    
-        if (keyIsDown(LEFT_ARROW) && !keyIsDown(RIGHT_ARROW) && !keyIsDown(UP_ARROW)) {
+        noFill()
+        stroke(255, 0)
+        rect(this.x, this.y, 30, 55)
+
+        if (attacking) {
+            image(charcter_AttackGIF, this.x - 35, this.y - 50, w /9, h / 5, 0, 0, 0, 0, 100);
+        } else if (keyIsDown(LEFT_ARROW) && !keyIsDown(RIGHT_ARROW) && !keyIsDown(UP_ARROW)) {
             this.gravity = 0.7;
             this.x -= 4;
             image(LoadCharacter_RunL, this.x - 28, this.y - 45, w / 11, h / 5, 0, 0, 0, 0, 100);
-        } 
-        else if (keyIsDown(RIGHT_ARROW) && !keyIsDown(LEFT_ARROW) && !keyIsDown(UP_ARROW)) {
+        } else if (keyIsDown(RIGHT_ARROW) && !keyIsDown(LEFT_ARROW) && !keyIsDown(UP_ARROW)) {
             this.gravity = 0.7;
             this.x += 4;
             image(LoadCharacter_RunR, this.x - 40, this.y - 45, w / 11, h / 5, 0, 0, 0, 0, 100);
-        } 
-        else if (keyIsDown(UP_ARROW)) {
-            this.y -= 18
-            this.gravity = 0.7
-            this.velocity += this.gravity
-            this.y += this.velocity
+        } else if (keyIsDown(UP_ARROW)) {
+            this.y -= 18;
+            this.gravity = 0.7;
+            this.velocity += this.gravity;
+            this.y += this.velocity;
             if (keyIsDown(LEFT_ARROW)) {
-                this.x -= 4
-                image(LoadCharacter_JumpL, this.x - 35, this.y - 50, w / 14, h / 6, 0, 0, 0, 0, 100)
-            } 
-            else if (keyIsDown(RIGHT_ARROW)) {
-                this.x += 4
-                image(LoadCharacter_JumpR, this.x - 35, this.y - 50, w / 14, h / 6, 0, 0, 0, 0, 100)
-            } 
-            else {
-                image(LoadCharacter_JumpR, this.x - 35, this.y - 50, w / 14, h / 6, 0, 0, 0, 0, 100)
+                this.x -= 4;
+                image(LoadCharacter_JumpL, this.x - 35, this.y - 50, w / 14, h / 6, 0, 0, 0, 0, 100);
+            } else if (keyIsDown(RIGHT_ARROW)) {
+                this.x += 4;
+                image(LoadCharacter_JumpR, this.x - 35, this.y - 50, w / 14, h / 6, 0, 0, 0, 0, 100);
+            } else {
+                image(LoadCharacter_JumpR, this.x - 35, this.y - 50, w / 14, h / 6, 0, 0, 0, 0, 100);
             }
-        }
-        else {
+        } else if (keyIsDown(90)) {
+            attacking = true;
+            image(charcter_AttackGIF, this.x - 35, this.y - 50, w /9, h / 5, 0, 0, 0, 0, 100);
+        } else {
             image(charcter_I, this.x - 28, this.y - 45, w / 12, h / 5, 0, 0, 0, 0, 100);
+        }
+
+    this.interaction = function() {
+        // interaction box
+        noFill()
+        stroke(255, 0)
+        rect(this.x-8, this.y-10, 75, 75)
+    }
+
+    this.attacking_box = function(){
+        if(attacking){
+            console.log("attack")
+            noFill()
+            stroke(255, 0)
+            rect(this.x+40, this.y-10, 45, 85)
         }
     }
 
@@ -100,18 +131,52 @@ function user() {
         this.y += this.velocity 
         this.velocity *= 0.9
 
-        // Check boundaries
-    if (this.y > height - 55) { // Prevent from going below the canvas bottom
+    if (this.y > height - 55) {
         this.y = height - 55;
         this.velocity = 0;
     }
-    if (this.x < 0) { // Prevent from going beyond left canvas edge
+    if (this.x < 0) {
         this.x = 0;
     }
-    if (this.x > width - 30) { // Prevent from going beyond right canvas edge
+    if (this.x > width - 30) { 
         this.x = width - 30;
     }
+    if (attacking) {
+        setTimeout(() => {
+            attacking = false
+        }, 100)
+    }
 }
+    }
+
+}
+
+function en() {
+    this.test = function() {
+        this.x = w/1.76
+        this.y = h/1.3
+        this.gravity = 0.5
+        this.lift = -20 
+        this.velocity = 0 
+
+        // fill("red")
+        // rect(this.x, this.y, 30, 55)
+        // image(LoadBoar_I)
+
+        function keyPressed() {
+            if(value === 65) {
+                fill("red")
+                rect(this.x, this.y, 30, 55)
+                image(LoadBoar_I,this.x - 28, this.y - 45, w / 12, h / 5, 0, 0, 0, 0, 100)
+            }
+        }
+
+        if (keyPressed (BACKSPACE) ) {
+            fill("red")
+            rect(this.x, this.y, 30, 55)
+            image(LoadBoar_I,this.x - 28, this.y - 45, w / 12, h / 5, 0, 0, 0, 0, 100)
+        }
+    }
 }
 
 function ground_1() {
@@ -208,6 +273,45 @@ function tiled(){
     }
 }
 
+function interaction() {
+    this.x = w/2
+    this.y = h/2
+
+    this.spawn = function() {
+        noFill()
+        stroke(255, 0)
+        rect(this.x-570, this.y+75, 75, 75)
+
+            if ( collideRectRect(this.x-570, this.y+75, 75, 75, player.x-8, player.y-10, 75, 75) === true) {
+                console.log("INTERACt")
+                image(loadArros,this.x-600, this.y-90, 200, 200 )
+            }
+    }
+
+    this.bridge = function() {
+        noFill()
+        stroke(255, 0)
+        rect(this.x+70, this.y+180, 75, 75)
+
+            if ( collideRectRect(this.x+70, this.y+180, 75, 75, player.x-8, player.y-10, 75, 75) === true) {
+                console.log("INTERACt")
+                image(loadPress_A,this.x+15, this.y+60, 200, 200 )
+                if (keyIsDown(65)) {
+                    location.href="index.html"
+                }
+            }
+    }
+    this.zzz = function() {
+        noFill()
+        stroke(255, 0)
+        rect(this.x-260, this.y+150, 75, 75)
+            if ( collideRectRect(this.x-260, this.y+150, 75, 75, player.x-8, player.y-10, 75, 75) === true) {
+                console.log("INTERACt")
+                image(loadpress_Z,this.x-295, this.y+20, 200, 200 )
+            }
+    }
+}
+
 function draw() {
     maps.back()
     maps.tree()
@@ -215,5 +319,10 @@ function draw() {
     player.show()
     p1g.hit()
     player.update()
+    player.interaction()
+    player.attacking_box()
     maps.map1()
+    int.spawn()
+    int.bridge()
+    int.zzz()
 }
