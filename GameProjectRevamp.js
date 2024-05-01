@@ -44,7 +44,7 @@ function preload() {
     LoadCharacter_JumpL = loadImage("characterJumpL.gif")
 
     // boar
-    LoadBoar_I = loadImage("Boar_idle.png")
+    LoadBoar_I = loadImage("bsoar_idle.png")
 
     // signs 
     loadPress_A = loadImage("press_A.png")
