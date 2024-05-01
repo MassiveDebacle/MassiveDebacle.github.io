@@ -5,12 +5,14 @@ let opening
 let loadplay
 let loadtitle
 let back
+let music
 
 function preload() {
     loadplay = loadImage("press_space.png")
     loadmap = loadImage("start_map.png")
     loadtitle = loadImage("title_thing.png")
     back = loadImage("back.png")
+    music = loadSound("begin_music.mp3")
 }
 
 function setup() {
@@ -23,7 +25,7 @@ function op() {
     this.y = h
     this.yy = h/30
     this.start = function(){
-        image(loadplay, this.x/2.7, this.y/2, 350,350)
+        image(loadplay, this.x/2.7, this.y/1.8, 350,350)
         if (keyIsDown(32)) {
             location.href="GameProjectRevamp.html"
         }
@@ -44,4 +46,6 @@ function draw() {
     opening.background()
     opening.start()
     opening.title()
+    music.setVolume(0.3)
+    music.play()
 }
