@@ -5,6 +5,7 @@ let maps
 let attacking
 let player 
 let back
+let music
 
 
 function preload() {

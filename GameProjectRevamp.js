@@ -8,6 +8,7 @@ let back
 let enemy
 let attacking
 let auto_pathing
+let music
 
 // polys 
 
