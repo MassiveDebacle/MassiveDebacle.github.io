@@ -8,7 +8,6 @@ let back
 let enemy
 let attacking
 let auto_pathing
-let music
 
 // polys 
 
@@ -27,7 +26,6 @@ let charcter_AttackGIF
 
 function preload() {
 
-    music = loadSound("mhm.mp3")
 
     m1 = loadImage("ezMap.png")
     gob_I = loadImage("GoblinIdle.png")
@@ -480,7 +478,6 @@ function heads_up_display() {
 
 
 function draw() {
-    music.play()
     maps.back()
     maps.tree()
     p1g.show()

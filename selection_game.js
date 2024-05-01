@@ -5,11 +5,9 @@ let maps
 let attacking
 let player 
 let back
-let music
 
 
 function preload() {
-    music = loadSound("mhm.mp3")
 
     loadfront = loadImage("selection_front.png")
     loadmiddle = loadImage("selection_middle.png")
@@ -302,11 +300,9 @@ function interaction() {
     }}
 }
 
-music.setVolume(0.10)
 
 function draw() {
     maps.back()
-    music.play()
     maps.selection_back_map()
     ground.brick()
     ground.hit() 

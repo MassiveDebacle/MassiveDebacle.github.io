@@ -19,8 +19,6 @@ let enemySpawnInterval = 10000
 
 function preload() {
 
-    music = loadSound("mhm.mp3")
-
     loadfront = loadImage("cave_front.png")
     loadmiddle = loadImage("cave_middle.png")
     load_map_back = loadImage("cave_back.png")
@@ -536,7 +534,6 @@ function rounds() {
     }
 
 function draw() {
-    music.play()
     maps.back();
     maps.cave_back();
     ground.brick();
